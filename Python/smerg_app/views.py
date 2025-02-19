@@ -333,9 +333,11 @@ class BusinessList(APIView):
                 update_fields = []
                 for field, value in request.data.items():
                     if hasattr(business, field):
-                        if value is None and isinstance(getattr(business.__class__, field).field, models.FileField):
-                            if getattr(business, field):
-                                await sync_to_async(getattr(business, field).delete)(save=False)
+                        field_object = getattr(business.__class__, field).field
+                        if isinstance(field_object, models.FileField) and value is None:
+                            existing_file = getattr(business, field)
+                            if existing_file:
+                                await sync_to_async(existing_file.delete)(save=False)
                             setattr(business, field, None)
                         else:
                             setattr(business, field, value)
