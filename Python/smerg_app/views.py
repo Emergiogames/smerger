@@ -757,7 +757,8 @@ class RecentActs(APIView):
             exists, user = await check_user(request.headers.get('token'))
             if exists:
                 product = await SaleProfiles.objects.aget(id=request.data.get('productId'))
-                if user == product.user:
+                product_user = await sync_to_async(lambda: product.user)()
+                if user == product_user:
                     return Response({'status':False,'message': 'User cant add'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
                 if product.entity_type == "Advisor":
                     return Response({'status':False,'message': 'Advisor cant add'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
