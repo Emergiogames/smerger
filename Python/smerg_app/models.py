@@ -130,8 +130,8 @@ class SaleProfiles(models.Model):
     staff = models.IntegerField(null=True, blank=True)
 
     # Advisor-specific fields
-    number = models.CharField(max_length=17)
-    email = models.EmailField(max_length=254)
+    number = models.CharField(max_length=17, blank=True, null=True)
+    email = models.EmailField(max_length=254, blank=True, null=True)
     interest = models.CharField(max_length=500, blank=True, null=True)
     designation = models.CharField(max_length=100, null=True, blank=True)
     experience = models.IntegerField(null=True, blank=True)
