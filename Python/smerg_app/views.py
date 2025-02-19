@@ -331,6 +331,7 @@ class BusinessList(APIView):
             if exists:
                 business = await SaleProfiles.objects.aget(id=id)
                 update_fields = []
+                print(request.data)
                 for field, value in request.data.items():
                     if hasattr(business, field):
                         field_object = getattr(business.__class__, field).field
