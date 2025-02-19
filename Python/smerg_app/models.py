@@ -130,15 +130,12 @@ class SaleProfiles(models.Model):
     staff = models.IntegerField(null=True, blank=True)
 
     # Advisor-specific fields
-    interested_in = models.JSONField(null=True, blank=True)
-    role = models.CharField(max_length=100, null=True, blank=True)
+    number = models.CharField(max_length=17)
+    email = models.EmailField(max_length=254)
+    interest = models.CharField(max_length=500, blank=True, null=True)
     designation = models.CharField(max_length=100, null=True, blank=True)
-    interested_industry = models.JSONField(null=True, blank=True)
-    interested_location = models.JSONField(null=True, blank=True)
-    yr_experiance = models.IntegerField(null=True, blank=True)
-    factors_looking = models.TextField(null=True, blank=True)
-    about_company = models.TextField(null=True, blank=True)
-    
+    experience = models.IntegerField(null=True, blank=True)
+
     # Common file fields
     profile = models.FileField(storage=MediaStorage(), upload_to='combined/images/profile', null=True, blank=True)
     logo = models.FileField(storage=MediaStorage(), upload_to='combined/images', null=True, blank=True)
