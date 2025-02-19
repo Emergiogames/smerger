@@ -134,7 +134,7 @@ class SaleProfiles(models.Model):
     email = models.EmailField(max_length=254, blank=True, null=True)
     interest = models.CharField(max_length=500, blank=True, null=True)
     designation = models.CharField(max_length=100, null=True, blank=True)
-    experience = models.IntegerField(null=True, blank=True)
+    experience = models.CharField(null=True, blank=True)
 
     # Common file fields
     profile = models.FileField(storage=MediaStorage(), upload_to='combined/images/profile', null=True, blank=True)
