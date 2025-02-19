@@ -338,9 +338,11 @@ class BusinessList(APIView):
                             existing_file = getattr(business, field)
                             if existing_file:
                                 await sync_to_async(existing_file.delete)(save=False)
-                            setattr(business, field, "")
+                            setattr(business, field, None)
+                            print("File deleted")
                         else:
                             setattr(business, field, value)
+                            print("Field updated")
                         update_fields.append(field)
                 
                 if update_fields:
