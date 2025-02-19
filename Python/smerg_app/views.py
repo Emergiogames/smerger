@@ -330,9 +330,18 @@ class BusinessList(APIView):
             exists, user = await check_user(request.headers.get('token'))
             if exists:
                 business = await SaleProfiles.objects.aget(id=id)
-                saved, resp = await update_serial(SaleProfilesSerial, request.data, business)
-                if saved:
-                    return Response({'status':True}, status=status.HTTP_201_CREATED)
+                update_fields = []
+                for field, value in request.data.items():
+                    if hasattr(business, field):
+                        setattr(business, field, value)
+                        update_fields.append(field)
+                
+                if update_fields:
+                    await business.asave(update_fields=update_fields)
+                return Response({'status': True}, status=status.HTTP_201_CREATED)
+                # saved, resp = await update_serial(SaleProfilesSerial, request.data, business)
+                # if saved:
+                #     return Response({'status':True}, status=status.HTTP_201_CREATED)
                 return Response(resp)
             return Response({'status':False,'message': 'User doesnot exist'}, status=status.HTTP_400_BAD_REQUEST)
         return Response({'status':False,'message': 'Token is not passed'}, status=status.HTTP_401_UNAUTHORIZED)
