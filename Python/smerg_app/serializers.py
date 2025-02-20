@@ -22,7 +22,8 @@ class SaleProfilesSerial(serializers.ModelSerializer):
     def to_representation(self, instance):
         data = super().to_representation(instance)
         if 'listed_on' in data and instance.listed_on:
-            print(localtime(instance.listed_on).strftime('%Y-%m-%d %H:%M:%S'))
+            utc_time = instance.listed_on
+            local_time = localtime(utc_time)
             data['listed_on'] = localtime(instance.listed_on).strftime('%Y-%m-%d %H:%M:%S')
         return data
 
