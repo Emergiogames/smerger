@@ -2,6 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 from .models import *
 from django.utils import timezone  
+from django.utils.timezone import localtime
 
 class UserSerial(serializers.ModelSerializer):
     class Meta:
@@ -24,6 +25,7 @@ class SaleProfilesSerial(serializers.ModelSerializer):
         
         # Assuming you have a datetime field named 'created_at'
         if 'listed_on' in data and instance.listed_on:
+            print(localtime(instance.listed_on).strftime('%Y-%m-%d %H:%M:%S'))
             data['listed_on'] = localtime(instance.listed_on).strftime('%Y-%m-%d %H:%M:%S')
 
         return data
