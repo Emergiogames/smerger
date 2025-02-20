@@ -881,7 +881,7 @@ class Prefer(APIView):
                     preference = await Preference.objects.aget(user=user)
                     serialized_data = await serialize_data(preference, PrefSerial)
                     return Response(serialized_data)
-                return Response({'status': False, 'message': 'Preference does not exist'}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'status': False, 'message': 'Preference does not exist'}, status=status.HTTP_404_NOT_FOUND)
             return Response({'status':False,'message': 'User doesnot exist'}, status=status.HTTP_400_BAD_REQUEST)
         return Response({'status':False,'message': 'Token is not passed'}, status=status.HTTP_401_UNAUTHORIZED)
 
