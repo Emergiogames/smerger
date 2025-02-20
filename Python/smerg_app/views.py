@@ -1138,9 +1138,9 @@ class Graph(APIView):
     @swagger_auto_schema(operation_description="Graph data fetching",
     responses={200: "Graph Details fetched succesfully",400:"Passes an error message"})
     async def get(self,request):
-        businessData = SaleProfiles.objects.filter(entity_type='business', verified=True, subscribed=True).annotate(month=ExtractMonth("created_at")).values("month").annotate(total_rate=Sum("range_starting")).values("month", "total_rate")[:5]
-        investorData = SaleProfiles.objects.filter(entity_type='investor', verified=True, subscribed=True).annotate(month=ExtractMonth("created_at")).values("month").annotate(total_rate=Sum("range_starting")).values("month", "total_rate")[:5]
-        franchiseData = SaleProfiles.objects.filter(entity_type='franchise', verified=True, subscribed=True).annotate(month=ExtractMonth("created_at")).values("month").annotate(total_rate=Sum("range_starting")).values("month", "total_rate")[:5]
+        businessData = SaleProfiles.objects.filter(entity_type='business', verified=True, subscribed=True).annotate(month=ExtractMonth("listed_on")).values("month").annotate(total_rate=Sum("range_starting")).values("month", "total_rate")[:5]
+        investorData = SaleProfiles.objects.filter(entity_type='investor', verified=True, subscribed=True).annotate(month=ExtractMonth("listed_on")).values("month").annotate(total_rate=Sum("range_starting")).values("month", "total_rate")[:5]
+        franchiseData = SaleProfiles.objects.filter(entity_type='franchise', verified=True, subscribed=True).annotate(month=ExtractMonth("listed_on")).values("month").annotate(total_rate=Sum("range_starting")).values("month", "total_rate")[:5]
         investAmount=0
         totalAmount = 0
         async for i in investorData:

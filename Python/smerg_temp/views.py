@@ -593,7 +593,7 @@ class DashboardView(APIView):
             except ValueError:
                 return Response({'status': False, 'message': 'Invalid date format. Use YYYY-MM-DD.'}, status=status.HTTP_400_BAD_REQUEST)
 
-            posts_count = SaleProfiles.objects.filter(created_at__range=[start_date, end_date]).count()
+            posts_count = SaleProfiles.objects.filter(listed_on__range=[start_date, end_date]).count()
             users_count = UserProfile.objects.filter(date_joined__range=[start_date, end_date]).count()
             reports_count = Report.objects.filter(created_at__range=[start_date, end_date]).count()
             subscribe_count = Subscription.objects.filter(expiry_date__range=[start_date, end_date]).count()

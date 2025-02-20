@@ -78,7 +78,6 @@ class SaleProfiles(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(null=True, blank=True)
     impressions = models.IntegerField(default=0)
-    created_at = models.DateTimeField(auto_now=True, null=True)
 
     # Common fields
     industry = models.CharField(max_length=100, null=True, blank=True)
@@ -88,7 +87,7 @@ class SaleProfiles(models.Model):
     state = models.CharField(max_length=100, null=True, blank=True)
     establish_yr = models.CharField(max_length=100, null=True, blank=True)
     ebitda = models.IntegerField(null=True, blank=True)
-    listed_on = models.DateTimeField(auto_now=True)
+    listed_on = models.DateTimeField(auto_now=True, default=now)
     range_starting = models.IntegerField(null=True, blank=True)
     range_ending = models.IntegerField(null=True, blank=True)
 
