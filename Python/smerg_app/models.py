@@ -78,7 +78,7 @@ class SaleProfiles(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(null=True, blank=True)
     impressions = models.IntegerField(default=0)
-    created_at = models.DateTimeField(auto_now=True, null=True, default=now)
+    created_at = models.DateTimeField(auto_now=True, null=True)
 
     # Common fields
     industry = models.CharField(max_length=100, null=True, blank=True)
