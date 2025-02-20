@@ -20,14 +20,10 @@ class SaleProfilesSerial(serializers.ModelSerializer):
         return super().update(instance, validated_data)
     
     def to_representation(self, instance):
-        """Convert datetime fields to local time"""
         data = super().to_representation(instance)
-        
-        # Assuming you have a datetime field named 'created_at'
         if 'listed_on' in data and instance.listed_on:
             print(localtime(instance.listed_on).strftime('%Y-%m-%d %H:%M:%S'))
             data['listed_on'] = localtime(instance.listed_on).strftime('%Y-%m-%d %H:%M:%S')
-
         return data
 
 class WishlistSerial(serializers.ModelSerializer):
