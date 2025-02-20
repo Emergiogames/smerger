@@ -48,6 +48,6 @@ def log_model_save(sender, instance, created, **kwargs):
     if post_ids:
         SaleProfiles.objects.filter(id__in=post_ids).update(subscribed=True)
 
-    # updating remaining posts count
-    instance.remaining_posts = max(0, instance.remaining_posts - posts.count())
-    instance.save()
+        # updating remaining posts count
+        instance.remaining_posts = max(0, instance.remaining_posts - posts.count())
+        instance.save()
