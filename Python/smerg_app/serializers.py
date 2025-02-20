@@ -14,9 +14,8 @@ class SaleProfilesSerial(serializers.ModelSerializer):
         fields = '__all__'
 
     def update(self, instance, validated_data):
-        # Exclude 'verified' from user updates
-        validated_data.pop('verified', None)  # Remove verified from any user input
-        instance.verified = False  # Force set to False on updates
+        validated_data.pop('verified', None) 
+        instance.verified = False
         return super().update(instance, validated_data)
 
 class WishlistSerial(serializers.ModelSerializer):

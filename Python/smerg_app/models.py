@@ -3,6 +3,7 @@ from django.contrib.auth.models import *
 import random, string
 from django.utils import timezone
 from custom_storages import MediaStorage
+from django.utils.timezone import now
 
 class CustomUserManager(UserManager):
     def create_user(self, username, email=None, password=None, **extra_fields):
@@ -77,7 +78,7 @@ class SaleProfiles(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(null=True, blank=True)
     impressions = models.IntegerField(default=0)
-    created_at = models.DateField(auto_now=True, null=True)
+    created_at = models.DateField(auto_now=True, null=True, default=now)
 
     # Common fields
     industry = models.CharField(max_length=100, null=True, blank=True)
