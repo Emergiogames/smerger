@@ -24,7 +24,8 @@ class SaleProfilesSerial(serializers.ModelSerializer):
         if 'listed_on' in data and instance.listed_on:
             utc_time = instance.listed_on
             local_time = localtime(utc_time)
-            data['listed_on'] = localtime(instance.listed_on).strftime('%Y-%m-%d %H:%M:%S')
+            data['listed_on'] = local_time.strftime('%Y-%m-%d %H:%M:%S')
+            # data['listed_on'] = localtime(instance.listed_on).strftime('%Y-%m-%d %H:%M:%S')
         return data
 
 class WishlistSerial(serializers.ModelSerializer):
