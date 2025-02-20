@@ -287,6 +287,9 @@ class BusinessList(APIView):
         manual_parameters=[openapi.Parameter('id', openapi.IN_PATH,description="0 to fetch all business posts; otherwise, fetch user's business posts.",type=openapi.TYPE_INTEGER, required=True),])
     async def get(self,request,id):
         if id == 0:
+            async for posts in SaleProfiles.objects.filter(entity_type='business', block=False, verified=True, subscribed=True).order_by('-id'):
+                time = await sync_to_async(lambda: posts.created_at)()
+                print(time)
             businesses = [posts async for posts in SaleProfiles.objects.filter(entity_type='business', block=False, verified=True, subscribed=True).order_by('-id')]
         else:
             exists, user = await check_user(request.headers.get('token'))
