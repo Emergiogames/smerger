@@ -287,9 +287,6 @@ class BusinessList(APIView):
         manual_parameters=[openapi.Parameter('id', openapi.IN_PATH,description="0 to fetch all business posts; otherwise, fetch user's business posts.",type=openapi.TYPE_INTEGER, required=True),])
     async def get(self,request,id):
         if id == 0:
-            async for posts in SaleProfiles.objects.filter(entity_type='business', block=False, verified=True, subscribed=True).order_by('-id'):
-                time = await sync_to_async(lambda: posts.created_at)()
-                print(time)
             businesses = [posts async for posts in SaleProfiles.objects.filter(entity_type='business', block=False, verified=True, subscribed=True).order_by('-id')]
         else:
             exists, user = await check_user(request.headers.get('token'))
@@ -1068,6 +1065,8 @@ class Featured(APIView):
             serial = SaleProfilesSerial
         async for i in product:
             user_id = await sync_to_async(lambda: i.user)()
+            time = await sync_to_async(lambda: i.created_at)()
+            print(time)
             if await Subscription.objects.filter(user=user_id, plan__type=request.GET.get('type')).aexists():
                 subscribed = await Subscription.objects.aget(user=user_id, plan__type=request.GET.get('type'))
                 plan_id = await sync_to_async(lambda: subscribed.plan.id)()
