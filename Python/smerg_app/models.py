@@ -78,7 +78,7 @@ class SaleProfiles(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(null=True, blank=True)
     impressions = models.IntegerField(default=0)
-    created_at = models.DateField(auto_now=True, null=True, default=now)
+    created_at = models.DateTimeField(auto_now=True, null=True, default=now)
 
     # Common fields
     industry = models.CharField(max_length=100, null=True, blank=True)
@@ -135,7 +135,7 @@ class SaleProfiles(models.Model):
     email = models.EmailField(max_length=254, blank=True, null=True)
     interest = models.CharField(max_length=500, blank=True, null=True)
     designation = models.CharField(max_length=100, null=True, blank=True)
-    experience = models.CharField(null=True, blank=True)
+    experience = models.CharField(null=True, blank=True, max_length=100)
 
     # Common file fields
     profile = models.FileField(storage=MediaStorage(), upload_to='combined/images/profile', null=True, blank=True)
