@@ -92,7 +92,7 @@ class RegisterOtp(APIView):
             key = f'otp_{request.data.get('phone')}'
             cache_value = await sync_to_async(cache.get)(key)
             if not cache_value:
-                await sync_to_async(cache.set)(key, f"{otp:04d}", timeout=60)
+                await sync_to_async(cache.set)(key, f"{otp:04d}", timeout=30)
                 await twilio_int(f"{otp:04d}", request.data.get('phone'))
             return Response({'status':True}, status=status.HTTP_200_OK)
         return Response({'status':False,'message':"Phone number/ Email not found"}, status=status.HTTP_400_BAD_REQUEST)
@@ -152,7 +152,7 @@ class ForgotPwd(APIView):
             key = f'otp_{request.data.get('number')}'
             cache_value = await sync_to_async(cache.get)(key)
             if not cache_value:
-                await sync_to_async(cache.set)(key, f"{otp:04d}", timeout=60)
+                await sync_to_async(cache.set)(key, f"{otp:04d}", timeout=30)
                 await twilio_int(f"{otp:04d}", request.data.get('number'))
             return Response({'status':True}, status=status.HTTP_200_OK)
         return Response({'status':False,'message': 'User doesnot exist'}, status=status.HTTP_400_BAD_REQUEST)
