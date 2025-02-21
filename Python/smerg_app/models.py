@@ -87,7 +87,7 @@ class SaleProfiles(models.Model):
     state = models.CharField(max_length=100, null=True, blank=True)
     establish_yr = models.CharField(max_length=100, null=True, blank=True)
     ebitda = models.IntegerField(null=True, blank=True)
-    listed_on = models.DateTimeField(auto_now=True, default=now)
+    listed_on = models.DateTimeField(auto_now=True)
     range_starting = models.IntegerField(null=True, blank=True)
     range_ending = models.IntegerField(null=True, blank=True)
 
