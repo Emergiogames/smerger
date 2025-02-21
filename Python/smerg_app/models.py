@@ -196,7 +196,8 @@ class Testimonial(models.Model):
     user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     advisor = models.ForeignKey(SaleProfiles, on_delete=models.CASCADE, null=True, blank=True)
     rate = models.IntegerField(default=0)
-    testimonial = models.TextField()
+    testimonial = models.TextField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now=True)
 
 # Log of datas
 class ActivityLog(models.Model):

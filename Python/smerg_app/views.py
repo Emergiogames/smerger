@@ -834,16 +834,18 @@ class Testimonials(APIView):
             if exists:
                 # request.data['user'] = user.id
                 data = request.data
-                advisor = await SaleProfiles.objects.aget(id=request.data.get('advisorId'))
-                user_id = await sync_to_async(lambda: advisor.user.id)()
-                if user_id == user.id:
-                    return Response({'status':False,'message': 'User cant add'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
-                data['user'] = user.id
-                data['advisor'] = request.data.get('advisorId')
-                saved, resp = await create_serial(TestSerial, data)
-                if saved:
-                    return Response({'status':True}, status=status.HTTP_200_OK)
-                return Response(resp)
+                if request.data.get('advisorId') and await SaleProfiles.objects.filter(id=request.data.get('advisorId')).aexists():
+                    advisor = await SaleProfiles.objects.aget(id=request.data.get('advisorId'))
+                    user_id = await sync_to_async(lambda: advisor.user.id)()
+                    if user_id == user.id:
+                        return Response({'status':False,'message': 'User cant add'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+                    data['user'] = user.id
+                    data['advisor'] = request.data.get('advisorId')
+                    saved, resp = await create_serial(TestSerial, data)
+                    if saved:
+                        return Response({'status':True}, status=status.HTTP_200_OK)
+                    return Response(resp)
+                return Response({'status':False,'message': 'Advisor doesnot exist'}, status=status.HTTP_404_NOT_FOUND)
             return Response({'status':False,'message': 'User doesnot exist'}, status=status.HTTP_400_BAD_REQUEST)
         return Response({'status':False,'message': 'Token is not passed'}, status=status.HTTP_401_UNAUTHORIZED)
 
