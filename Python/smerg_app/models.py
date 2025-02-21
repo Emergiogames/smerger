@@ -195,7 +195,7 @@ class Suggestion(models.Model):
 class Testimonial(models.Model):
     user = models.ForeignKey(UserProfile,on_delete=models.CASCADE)
     company = models.CharField(max_length=1000)
-    rate = models.IntegerField()
+    rate = models.IntegerField(default=0)
     testimonial = models.TextField()
 
 # Log of datas
