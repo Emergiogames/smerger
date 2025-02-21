@@ -820,7 +820,7 @@ class Testimonials(APIView):
             if exists:
                 # if request.GET.get('userId'):
                 #     user = await UserProfile.objects.aget(id=request.GET.get('userId'))
-                tests = [test async for test in Testimonial.objects.filter(user=user).order_by('-id')]
+                tests = [test async for test in Testimonial.objects.filter(advisor__id=request.GET.get('advisorId')).order_by('-id')]
                 serialized_data = await serialize_data(tests, TestSerial)
                 return Response(serialized_data)
             return Response({'status':False,'message': 'User doesnot exist'}, status=status.HTTP_400_BAD_REQUEST)
