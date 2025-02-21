@@ -193,7 +193,8 @@ class Suggestion(models.Model):
 
 # Testimonials
 class Testimonial(models.Model):
-    user = models.ForeignKey(UserProfile,on_delete=models.CASCADE)
+    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+    advisor = models.ForeignKey(SaleProfiles, on_delete=models.CASCADE, null=True, blank=True)
     rate = models.IntegerField(default=0)
     testimonial = models.TextField()
 

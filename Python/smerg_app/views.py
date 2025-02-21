@@ -839,6 +839,7 @@ class Testimonials(APIView):
                 if user_id == user.id:
                     return Response({'status':False,'message': 'User cant add'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
                 data['user'] = user.id
+                data['advisor'] = request.data.get('advisorId')
                 saved, resp = await create_serial(TestSerial, data)
                 if saved:
                     return Response({'status':True}, status=status.HTTP_200_OK)
