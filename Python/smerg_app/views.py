@@ -21,7 +21,7 @@ from django.core.files.base import ContentFile
 from django.contrib.auth.hashers import check_password
 from rest_framework.authtoken.models import Token
 from rest_framework.authentication import TokenAuthentication
-from django.db.models import Count, Sum
+from django.db.models import Count, Sum, Avg
 from django.db.models.functions import ExtractMonth
 from django.core.cache import cache
 from .utils.twilio_utils import *
