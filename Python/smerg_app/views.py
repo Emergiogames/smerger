@@ -821,9 +821,9 @@ class Testimonials(APIView):
                 # if request.GET.get('userId'):
                 #     user = await UserProfile.objects.aget(id=request.GET.get('userId'))
                 tests = [test async for test in Testimonial.objects.filter(advisor__id=request.GET.get('advisorId')).order_by('-id')]
-                rate = await Testimonial.objects.filter(advisor__id=request.GET.get('advisorId')).aggregate(Avg('rating'))
+                rate = await Testimonial.objects.filter(advisor__id=request.GET.get('advisorId')).aggregate(Avg('rate'))
                 serialized_data = await serialize_data(tests, TestSerial)
-                return Response({'data': serialized_data, 'avg_rating': rate['rating__avg']})
+                return Response({'data': serialized_data, 'avg_rating': rate['rate__avg']})
             return Response({'status':False,'message': 'User doesnot exist'}, status=status.HTTP_400_BAD_REQUEST)
         return Response({'status':False,'message': 'Token is not passed'}, status=status.HTTP_401_UNAUTHORIZED)
 
