@@ -49,13 +49,13 @@ class SuggestSerial(serializers.ModelSerializer):
         fields = '__all__'
 
 class TestSerial(serializers.ModelSerializer):
+    user = UserSerial()
+    
     class Meta:
         model = Testimonial
         fields = '__all__'
 
 class TransSerial(serializers.ModelSerializer):
-    user = UserSerial()
-
     class Meta:
         model = ActivityLog
         fields = '__all__'
