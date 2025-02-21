@@ -844,9 +844,7 @@ class Testimonials(APIView):
                     # data['user'] = user.id
                     # data['advisor'] = request.data.get('advisorId')
                     # saved, resp = await create_serial(TestSerial, data)
-                    if saved:
-                        return Response({'status':True}, status=status.HTTP_200_OK)
-                    return Response(resp)
+                    return Response({'status':True}, status=status.HTTP_200_OK)
                 return Response({'status':False,'message': 'Advisor doesnot exist'}, status=status.HTTP_404_NOT_FOUND)
             return Response({'status':False,'message': 'User doesnot exist'}, status=status.HTTP_400_BAD_REQUEST)
         return Response({'status':False,'message': 'Token is not passed'}, status=status.HTTP_401_UNAUTHORIZED)
