@@ -840,7 +840,7 @@ class Testimonials(APIView):
                     user_id = await sync_to_async(lambda: advisor.user.id)()
                     if user_id == user.id:
                         return Response({'status':False,'message': 'User cant add'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
-                    await Testimonial.objects.acreate(user=user, advisor=advisor, **data)
+                    await Testimonial.objects.acreate(user=user, advisor=advisor, rate=request.data.get('rate'), testimonial=request.data.get('testimonial'))
                     # data['user'] = user.id
                     # data['advisor'] = request.data.get('advisorId')
                     # saved, resp = await create_serial(TestSerial, data)
