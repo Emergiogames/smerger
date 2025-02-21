@@ -834,6 +834,10 @@ class Testimonials(APIView):
             if exists:
                 # request.data['user'] = user.id
                 data = request.data
+                advisor = await SaleProfiles.objects.aget(id=request.data.get('advisorId'))
+                user_id = await sync_to_async(lambda: advisor.user.id)()
+                if user_id == user.id:
+                    return Response({'status':False,'message': 'User cant add'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
                 data['user'] = user.id
                 saved, resp = await create_serial(TestSerial, data)
                 if saved:
