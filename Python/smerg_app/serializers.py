@@ -54,7 +54,7 @@ class TestSerial(serializers.ModelSerializer):
         fields = '__all__'
 
 class TransSerial(serializers.ModelSerializer):
-    post = UserSerial()
+    user = UserSerial()
 
     class Meta:
         model = ActivityLog
