@@ -973,6 +973,10 @@ class Recommended(APIView):
                 else:
                     products = [posts async for posts in SaleProfiles.objects.filter(verified=True, subscribed=True).order_by('-id')[:10]]
                     serialized_data = await serialize_data(products, SaleProfilesSerial)
+                if request.GET.get('type') == "advisor":
+                    rate = await sync_to_async(lambda: {advisor_.id: (Testimonial.objects.filter(advisor=advisor_).aggregate(Avg('rate')) or 0) for advisor_ in product})()
+                    for advisor in serialized_data:
+                        advisor['average_rating'] = round(rate.get(advisor['id'])['rate__avg'], 1) if rate.get(advisor['id'])['rate__avg'] else 0
                 return Response(serialized_data)
             return Response({'status':False,'message': 'User doesnot exist'}, status=status.HTTP_400_BAD_REQUEST)
         return Response({'status':False,'message': 'Token is not passed'}, status=status.HTTP_401_UNAUTHORIZED)
@@ -1085,9 +1089,8 @@ class Featured(APIView):
         serialized_data = await serialize_data(data, serial)
         if request.GET.get('type') == "advisor":
             rate = await sync_to_async(lambda: {advisor_.id: (Testimonial.objects.filter(advisor=advisor_).aggregate(Avg('rate')) or 0) for advisor_ in product})()
-            # advisor_ratings = await rate()
             for advisor in serialized_data:
-                advisor['average_rating'] = rate.get(advisor['id'])['rate__avg']    
+                advisor['average_rating'] = round(rate.get(advisor['id'])['rate__avg'], 1) if rate.get(advisor['id'])['rate__avg'] else 0
         return Response(serialized_data)
 
 # Latest Posts
@@ -1102,6 +1105,10 @@ class Latest(APIView):
             product = [post async for post in SaleProfiles.objects.filter(verified=True, subscribed=True).order_by('-id')[:10]]
             serial = SaleProfilesSerial
         serialized_data = await serialize_data(product, serial)
+        if request.GET.get('type') == "advisor":
+            rate = await sync_to_async(lambda: {advisor_.id: (Testimonial.objects.filter(advisor=advisor_).aggregate(Avg('rate')) or 0) for advisor_ in product})()
+            for advisor in serialized_data:
+                advisor['average_rating'] = round(rate.get(advisor['id'])['rate__avg'], 1) if rate.get(advisor['id'])['rate__avg'] else 0
         return Response(serialized_data)
 
 # Notification
