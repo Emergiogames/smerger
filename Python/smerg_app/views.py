@@ -541,7 +541,10 @@ class AdvisorList(APIView):
             if not exists:
                 return Response({'status':False,'message': 'User doesnot exist'}, status=status.HTTP_400_BAD_REQUEST)
             advisor = [posts async for posts in SaleProfiles.objects.filter(entity_type='advisor', user=user, block=False).order_by('-id')]
+        rate = await sync_to_async(lambda: {advisor_.id: Testimonial.objects.filter(advisor__id=request.GET.get('advisorId')).aggregate(Avg('rate')) for advisor_ in advisor})()
         serialized_data = await serialize_data(advisor, SaleProfilesSerial)
+        for advisor in serialized_data:
+            advisor['average_rating'] = advisor_ratings.get(advisor['id'])
         return Response(serialized_data)
 
     @swagger_auto_schema(operation_description="Advisor creation",request_body=SaleProfilesSerial,
