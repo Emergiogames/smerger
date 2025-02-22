@@ -1084,10 +1084,10 @@ class Featured(APIView):
                     data.append(i)
         serialized_data = await serialize_data(data, serial)
         if request.GET.get('type') == "advisor":
-            rate = await sync_to_async(lambda: {advisor_.id: float(Testimonial.objects.filter(advisor=advisor_).aggregate(Avg('rate'))['avg_rating'] or 0) for advisor_ in product})()
+            rate = await sync_to_async(lambda: {advisor_.id: float(Testimonial.objects.filter(advisor=advisor_).aggregate(Avg('rate')) or 0) for advisor_ in product})()
             # advisor_ratings = await rate()
             for advisor in serialized_data:
-                advisor['average_rating'] = rate.get(advisor['id'])
+                advisor['average_rating'] = rate.get(advisor['id'])['rate__avg']    
         return Response(serialized_data)
 
 # Latest Posts
