@@ -591,7 +591,7 @@ class AdvisorList(APIView):
             exists, user = await check_user(request.headers.get('token'))
             if exists:
                 if id == 0:
-                    async for profile in SaleProfiles.objects.filter(user=user, entity_type='franchise'):
+                    async for profile in SaleProfiles.objects.filter(user=user, entity_type='advisor'):
                         await profile.adelete()
                 else:
                     profiles = await SaleProfiles.objects.aget(id=id)
