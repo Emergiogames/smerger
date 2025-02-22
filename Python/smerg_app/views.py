@@ -341,6 +341,9 @@ class BusinessList(APIView):
                                 await sync_to_async(existing_file.delete)(save=False)
                             setattr(business, field, None)
                             print("File deleted")
+                        elif (isinstance(field_object, (models.FileField, models.CharField, models.IntegerField)) and value == ""):
+                            setattr(business, field, None)
+                            print("Field Changed")
                         else:
                             setattr(business, field, value)
                             print("Field updated")
