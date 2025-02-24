@@ -1355,6 +1355,9 @@ class RecentEnquiries(APIView):
                     if user_posts:
                         recent_enqs = [enqs async for enqs in Enquiries.objects.filter(post__id=request.GET.get('id')).order_by('-created')[:10]]
                         serialized_data = await serialize_data(recent_enqs, EnqSerial)
+                        user_data = await sync_to_async(lambda: {enq.id: enq.post.user.id for enq in recent_enqs})()
+                        for enq in serialized_data:
+                            enq['user_id'] = user_data.get(enq['id'])
                         return Response(serialized_data)
                     return Response({'status': False, 'message': 'No post found'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
                 return Response({'status': False, 'message': 'Post type param not found'}, status=status.HTTP_404_NOT_FOUND)
