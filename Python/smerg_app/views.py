@@ -976,7 +976,7 @@ class Recommended(APIView):
                     products = [posts async for posts in SaleProfiles.objects.filter(verified=True, subscribed=True).order_by('-id')[:10]]
                     serialized_data = await serialize_data(products, SaleProfilesSerial)
                 if request.GET.get('type') == "advisor":
-                    rate = await sync_to_async(lambda: {advisor_.id: (Testimonial.objects.filter(advisor=advisor_).aggregate(Avg('rate')) or 0) for advisor_ in product})()
+                    rate = await sync_to_async(lambda: {advisor_.id: (Testimonial.objects.filter(advisor=advisor_).aggregate(Avg('rate')) or 0) for advisor_ in productS})()
                     for advisor in serialized_data:
                         advisor['average_rating'] = round(rate.get(advisor['id'])['rate__avg'], 1) if rate.get(advisor['id'])['rate__avg'] else 0
                 return Response(serialized_data)
