@@ -408,7 +408,7 @@ class InvestorList(APIView):
                 sale = data.get('type_sale', 'sale')
                 city = data.get('city', '...')
                 state = data.get('state', '...')
-                data["title"] = f"{industry}, {data.get("preference", ["Investment"][0])}, {city}, {state}"
+                data["title"] = f"{industry}, {data.get("preference", "Investment")[0]}, {city}, {state}"
                 data["single_desc"] = f'{data.get("preference", ["Investment"][0])} in {city}, {state}'
                 subscribed = await check_subscription(user, "investor")
                 if subscribed:
