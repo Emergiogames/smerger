@@ -1248,7 +1248,7 @@ class Popularsearch(APIView):
                 if await SaleProfiles.objects.filter(id=request.data.get('post_id'), verified=True).aexists():
                     post = await SaleProfiles.objects.aget(id=request.data.get('post_id'), verified=True)
                     if not await Activity.objects.filter(post=post).aexists():
-                        created = await Activity.objects.acreate(post=post,count=1)
+                        created = await Activity.objects.acreate(post=post, count=1)
                     else:
                         activity = await Activity.objects.aget(post=post)
                         activity.count += 1
@@ -1270,44 +1270,44 @@ class Popularsearch(APIView):
         return Response({'status':False,'message': 'Token is not passed'}, status=status.HTTP_401_UNAUTHORIZED)
 
 # Recent searched Items
-class RecentSearchview(APIView):
-    @swagger_auto_schema(operation_description="Fetching Recently viewed items", responses={200: "Fetched successfully", 400: "Passes an error message"})
-    async def get(self, request):
-        if request.headers.get('token'):
-            exists, user = await check_user(request.headers.get('token'))
-            if exists:
-                recent_views = [acts async for acts in Activity.objects.filter(user=user).order_by('-created')[:10]]
-                serialized_data = await serialize_data(recent_views, ActivitySerial)
-                return Response(serialized_data)
-            return Response({'status': False, 'message': 'User does not exist'}, status=status.HTTP_400_BAD_REQUEST)
-        return Response({'status': False, 'message': 'Token is not passed'}, status=status.HTTP_401_UNAUTHORIZED)
+# class RecentSearchview(APIView):
+#     @swagger_auto_schema(operation_description="Fetching Recently viewed items", responses={200: "Fetched successfully", 400: "Passes an error message"})
+#     async def get(self, request):
+#         if request.headers.get('token'):
+#             exists, user = await check_user(request.headers.get('token'))
+#             if exists:
+#                 recent_views = [acts async for acts in Activity.objects.filter(user=user).order_by('-created')[:10]]
+#                 serialized_data = await serialize_data(recent_views, ActivitySerial)
+#                 return Response(serialized_data)
+#             return Response({'status': False, 'message': 'User does not exist'}, status=status.HTTP_400_BAD_REQUEST)
+#         return Response({'status': False, 'message': 'Token is not passed'}, status=status.HTTP_401_UNAUTHORIZED)
 
-    @swagger_auto_schema(operation_description="Record or increment count of a viewed item", request_body=ActivitySerial, responses={201: "Interaction recorded successfully", 400: "Error message"})
-    async def post(self, request):
-        if request.headers.get('token'):
-            exists, user = await check_user(request.headers.get('token'))
-            if exists:
-                post = await SaleProfiles.objects.aget(id=request.data.get('post_id'))
-                if await Activity.objects.filter(user=user, post=post).aexists():
-                    activity = await Activity.objects.aget(user=user, post=post)
-                    await activity.adelete()
-                activity = await Activity.objects.acreate(user=user, post=post)
-                await activity.asave()
-                return Response({'status': True, 'message': 'Interaction recorded successfully'}, status=status.HTTP_201_CREATED)
-                return Response({'status': False, 'message': 'Interaction already exists'}, status=status.HTTP_201_CREATED)
-            return Response({'status': False, 'message': 'User does not exist'}, status=status.HTTP_400_BAD_REQUEST)
-        return Response({'status': False, 'message': 'Token is not passed'}, status=status.HTTP_401_UNAUTHORIZED)
+#     @swagger_auto_schema(operation_description="Record or increment count of a viewed item", request_body=ActivitySerial, responses={201: "Interaction recorded successfully", 400: "Error message"})
+#     async def post(self, request):
+#         if request.headers.get('token'):
+#             exists, user = await check_user(request.headers.get('token'))
+#             if exists:
+#                 post = await SaleProfiles.objects.aget(id=request.data.get('post_id'))
+#                 if await Activity.objects.filter(user=user, post=post).aexists():
+#                     activity = await Activity.objects.aget(user=user, post=post)
+#                     await activity.adelete()
+#                 activity = await Activity.objects.acreate(user=user, post=post)
+#                 await activity.asave()
+#                 return Response({'status': True, 'message': 'Interaction recorded successfully'}, status=status.HTTP_201_CREATED)
+#                 return Response({'status': False, 'message': 'Interaction already exists'}, status=status.HTTP_201_CREATED)
+#             return Response({'status': False, 'message': 'User does not exist'}, status=status.HTTP_400_BAD_REQUEST)
+#         return Response({'status': False, 'message': 'Token is not passed'}, status=status.HTTP_401_UNAUTHORIZED)
 
-    @swagger_auto_schema(operation_description="Delete a specific activity", responses={200: "Activity deleted successfully", 400: "Error message"})
-    async def delete(self, request, id):
-        if request.headers.get('token'):
-            exists, user = await check_user(request.headers.get('token'))
-            if exists:
-                activity = await Activity.objects.aget(id=id, user=user)
-                await activity.adelete()
-                return Response({'status': True, 'message': 'Activity deleted successfully'}, status=status.HTTP_200_OK)
-            return Response({'status':False,'message': 'User doesnot exist'}, status=status.HTTP_400_BAD_REQUEST)
-        return Response({'status':False,'message': 'Token is not passed'}, status=status.HTTP_401_UNAUTHORIZED)
+#     @swagger_auto_schema(operation_description="Delete a specific activity", responses={200: "Activity deleted successfully", 400: "Error message"})
+#     async def delete(self, request, id):
+#         if request.headers.get('token'):
+#             exists, user = await check_user(request.headers.get('token'))
+#             if exists:
+#                 activity = await Activity.objects.aget(id=id, user=user)
+#                 await activity.adelete()
+#                 return Response({'status': True, 'message': 'Activity deleted successfully'}, status=status.HTTP_200_OK)
+#             return Response({'status':False,'message': 'User doesnot exist'}, status=status.HTTP_400_BAD_REQUEST)
+#         return Response({'status':False,'message': 'Token is not passed'}, status=status.HTTP_401_UNAUTHORIZED)
 
 # Report a Post
 class ReportPost(APIView):
