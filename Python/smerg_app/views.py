@@ -892,7 +892,7 @@ class Prefer(APIView):
                 pref_exists = await Preference.objects.filter(user=user).aexists()
                 if pref_exists:
                     preference = await Preference.objects.aget(user=user)
-                    serialized_data = await serialize_data(preference, PrefSerial)
+                    serialized_data = await get_serialize_data(preference, PrefSerial)
                     return Response(serialized_data)
                 return Response({'status': False, 'message': 'Preference does not exist'}, status=status.HTTP_404_NOT_FOUND)
             return Response({'status':False,'message': 'User doesnot exist'}, status=status.HTTP_400_BAD_REQUEST)
@@ -1288,7 +1288,7 @@ class RecentSearchview(APIView):
             exists, user = await check_user(request.headers.get('token'))
             if exists:
                 post = await SaleProfiles.objects.aget(id=request.data.get('post_id'))
-                if await Activity.objects.filter(post=post).aexists():
+                if await Activity.objects.filter(user=user, post=post).aexists():
                     activity = await Activity.objects.aget(user=user, post=post)
                     await activity.adelete()
                 activity = await Activity.objects.acreate(user=user, post=post)
