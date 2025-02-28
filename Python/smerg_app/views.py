@@ -878,6 +878,7 @@ class Testimonials(APIView):
                     if user_id == user.id:
                         return Response({'status':False,'message': 'User cant add'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
                     room = await Room.objects.filter(Q(first_person=user, second_person=user_id) | Q(first_person=user_id, second_person=user)).afirst()
+                    print(room)
                     messages = 0
                     if room:
                         messages = await ChatMessage.objects.filter(room=room).acount()
