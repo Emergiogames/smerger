@@ -881,7 +881,9 @@ class Testimonials(APIView):
                     print(room)
                     if not room:
                         return Response({'status':False,'message': 'Chat not done'}, status=status.HTTP_406_NOT_ACCEPTABLE)
-                    messages = await ChatMessage.objects.filter(room=room[0]).acount()
+                    messages = 0
+                    for i in room:
+                        messages += await ChatMessage.objects.filter(room=i).acount()
                     if messages < 5:
                         return Response({'status':False,'message': 'Chat not done'}, status=status.HTTP_406_NOT_ACCEPTABLE)
                     await Testimonial.objects.acreate(user=user, advisor=advisor, rate=request.data.get('rate'), testimonial=request.data.get('testimonial'))
