@@ -877,7 +877,7 @@ class Testimonials(APIView):
                     user_id = await sync_to_async(lambda: advisor.user.id)()
                     if user_id == user.id:
                         return Response({'status':False,'message': 'User cant add'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
-                    room = await Room.objects.filter(Q(user1=user, user2=user_id) | Q(user1=user_id, user2=user)).afirst()
+                    room = await Room.objects.filter(Q(first_person=user, second_person=user_id) | Q(first_person=user_id, second_person=user)).afirst()
                     messages = 0
                     if room:
                         messages = await ChatMessage.objects.filter(room=room).acount()
