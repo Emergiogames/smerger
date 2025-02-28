@@ -879,11 +879,11 @@ class Testimonials(APIView):
                         return Response({'status':False,'message': 'User cant add'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
                     room = await Room.objects.filter(Q(first_person=user, second_person=user_id) | Q(first_person=user_id, second_person=user)).afirst()
                     print(room)
-                    messages = 0
-                    if room:
-                        messages = await ChatMessage.objects.filter(room=room).acount()
-                        print(messages)
-                    if not room or messages < 5:
+                    if not room:
+                        return Response({'status':False,'message': 'Chat not done'}, status=status.HTTP_406_NOT_ACCEPTABLE)
+                    messages += await ChatMessage.objects.filter(room=room).acount()
+                    print(messages)
+                    if messages < 5:
                         return Response({'status':False,'message': 'Chat not done'}, status=status.HTTP_406_NOT_ACCEPTABLE)
                     await Testimonial.objects.acreate(user=user, advisor=advisor, rate=request.data.get('rate'), testimonial=request.data.get('testimonial'))
                     return Response({'status':True}, status=status.HTTP_200_OK)
