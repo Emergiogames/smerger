@@ -877,7 +877,7 @@ class Testimonials(APIView):
                     user_id = await sync_to_async(lambda: advisor.user.id)()
                     if user_id == user.id:
                         return Response({'status':False,'message': 'User cant add'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
-                    room = await Room.objects.filter(Q(first_person=user, second_person=user_id) | Q(first_person=user_id, second_person=user)).afirst()
+                    room = [i async for i in Room.objects.filter(Q(first_person=user, second_person=user_id) | Q(first_person=user_id, second_person=user))]
                     print(room)
                     if not room:
                         return Response({'status':False,'message': 'Chat not done'}, status=status.HTTP_406_NOT_ACCEPTABLE)
