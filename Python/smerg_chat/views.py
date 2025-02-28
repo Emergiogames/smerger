@@ -52,12 +52,12 @@ class Rooms(APIView):
                     if enquiry:
                         enquiry.room_id = room_id
                         await enquiry.asave()
-                    return Response({'status':True, 'name': recieved_name, 'image':image, 'roomId': room_id, 'post': {"id": reciever.id, "title": reciever.title, "image": image.url if image else None}})
+                    return Response({'status':True, 'name': recieved_name, 'image':image, 'roomId': room_id, 'post': {"id": reciever.id, "title": reciever.title, "image": image}})
                 room = await Room.objects.acreate(first_person=user, second_person=recieved_user, post=reciever, last_msg=encrypt_message("Tap to send message"))
                 if enquiry:
                     enquiry.room_id = room.id
                     await enquiry.asave()
-                return Response({'status':True,'name': recieved_name, 'image': image, 'roomId':room.id, 'post': {"id": reciever.id, "title": reciever.title, "image": reciever.user.image.url}})
+                return Response({'status':True,'name': recieved_name, 'image': image, 'roomId':room.id, 'post': {"id": reciever.id, "title": reciever.title, "image": image}})
             return Response({'status':False,'message': 'User doesnot exist'})
         return Response({'status':False,'message': 'Token is not passed'})
 
