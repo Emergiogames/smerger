@@ -600,7 +600,7 @@ class AdvisorList(APIView):
 
 # Update Posts
 class EditPosts(APIView):
-    @swagger_auto_schema(operation_description="Update an existing business post.",
+    @swagger_auto_schema(operation_description="Update an existing post.",
         request_body=openapi.Schema(type=openapi.TYPE_OBJECT,properties={'field_to_update': openapi.Schema(type=openapi.TYPE_STRING, description="Field to update"),},),
         responses={200: "{'status': True}",400: "Returns validation errors or {'status': False, 'message': 'Token is not passed'}",
         403: "{'status': False, 'message': 'User does not exist'}",404: "{'status': False, 'message': 'Business not found'}",})
@@ -608,23 +608,23 @@ class EditPosts(APIView):
         if request.headers.get('token'):
             exists, user = await check_user(request.headers.get('token'))
             if exists:
-                business = await SaleProfiles.objects.aget(id=id)
+                posts = await SaleProfiles.objects.aget(id=id)
                 update_fields = []
                 print(request.data)
                 for field, value in request.data.items():
-                    if hasattr(business, field):
-                        field_object = getattr(business.__class__, field).field
+                    if hasattr(posts, field):
+                        field_object = getattr(posts.__class__, field).field
                         if isinstance(field_object, models.FileField) and value == "null":
-                            existing_file = getattr(business, field)
+                            existing_file = getattr(posts, field)
                             if existing_file:
                                 await sync_to_async(existing_file.delete)(save=False)
-                            setattr(business, field, None)
+                            setattr(posts, field, None)
                             print("File deleted")
                         elif (isinstance(field_object, (models.FileField, models.CharField, models.IntegerField)) and value == ""):
-                            setattr(business, field, None)
+                            setattr(posts, field, None)
                             print("Field Changed")
                         else:
-                            setattr(business, field, value)
+                            setattr(posts, field, value)
                             print("Field updated")
                         update_fields.append(field)
                 
