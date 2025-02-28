@@ -18,6 +18,7 @@ urlpatterns = [
     path('franchise<int:id>', FranchiseList.as_view()), # Franchise
     path('advisor', AdvisorList.as_view()), # Advisor
     path('advisor<int:id>', AdvisorList.as_view()), # Advisor
+    path('edit_posts<int:id>', EditPosts.as_view()), # Edit posts
     path('contact', Contact.as_view()), # Contact Us
     path('search', Search.as_view()), # Search
     path('user', UserView.as_view()), # User information

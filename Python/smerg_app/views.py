@@ -352,10 +352,6 @@ class BusinessList(APIView):
                 if update_fields:
                     await business.asave(update_fields=update_fields)
                 return Response({'status': True}, status=status.HTTP_201_CREATED)
-                # saved, resp = await update_serial(SaleProfilesSerial, request.data, business)
-                # if saved:
-                #     return Response({'status':True}, status=status.HTTP_201_CREATED)
-                return Response(resp)
             return Response({'status':False,'message': 'User doesnot exist'}, status=status.HTTP_400_BAD_REQUEST)
         return Response({'status':False,'message': 'Token is not passed'}, status=status.HTTP_401_UNAUTHORIZED)
 
@@ -440,7 +436,6 @@ class InvestorList(APIView):
         responses={200: "{'status': True, 'message': 'Investor deleted successfully'}",403: "{'status': False, 'message': 'User does not exist'}",
         400: "{'status': False, 'message': 'Token is not passed'}",404: "{'status': False, 'message': 'Investor not found'}",},
         manual_parameters=[openapi.Parameter('id', openapi.IN_PATH,description="ID of the investor profile to delete. Use 0 to delete all profiles of the logged-in user.", type=openapi.TYPE_INTEGER, required=True),])
-
     async def delete(self,request,id):
         if request.headers.get('token'):
             exists, user = await check_user(request.headers.get('token'))
@@ -602,6 +597,43 @@ class AdvisorList(APIView):
                 return Response({'status':True}, status=status.HTTP_200_OK)
             return Response({'status':False,'message': 'User doesnot exist'}, status=status.HTTP_400_BAD_REQUEST)
         return Response({'status':False,'message': 'Token is not passed'}, status=status.HTTP_401_UNAUTHORIZED)
+
+# Update Posts
+class EditPosts(APIView):
+    @swagger_auto_schema(operation_description="Update an existing business post.",
+        request_body=openapi.Schema(type=openapi.TYPE_OBJECT,properties={'field_to_update': openapi.Schema(type=openapi.TYPE_STRING, description="Field to update"),},),
+        responses={200: "{'status': True}",400: "Returns validation errors or {'status': False, 'message': 'Token is not passed'}",
+        403: "{'status': False, 'message': 'User does not exist'}",404: "{'status': False, 'message': 'Business not found'}",})
+    async def patch(self,request,id):
+        if request.headers.get('token'):
+            exists, user = await check_user(request.headers.get('token'))
+            if exists:
+                business = await SaleProfiles.objects.aget(id=id)
+                update_fields = []
+                print(request.data)
+                for field, value in request.data.items():
+                    if hasattr(business, field):
+                        field_object = getattr(business.__class__, field).field
+                        if isinstance(field_object, models.FileField) and value == "null":
+                            existing_file = getattr(business, field)
+                            if existing_file:
+                                await sync_to_async(existing_file.delete)(save=False)
+                            setattr(business, field, None)
+                            print("File deleted")
+                        elif (isinstance(field_object, (models.FileField, models.CharField, models.IntegerField)) and value == ""):
+                            setattr(business, field, None)
+                            print("Field Changed")
+                        else:
+                            setattr(business, field, value)
+                            print("Field updated")
+                        update_fields.append(field)
+                
+                if update_fields:
+                    await business.asave(update_fields=update_fields)
+                return Response({'status': True}, status=status.HTTP_201_CREATED)
+            return Response({'status':False,'message': 'User doesnot exist'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'status':False,'message': 'Token is not passed'}, status=status.HTTP_401_UNAUTHORIZED)
+
 
 # User information
 class UserView(APIView):
