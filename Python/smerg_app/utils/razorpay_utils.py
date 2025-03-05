@@ -18,9 +18,10 @@ from django.conf import settings
 #         return False, str(e)
 
 def verify_payment(transaction_key, amount):
-
+    print(f"Amount: {amount}")
     client = razorpay.Client(auth=(settings.RAZORPAY_API_KEY, settings.RAZORPAY_API_SECRET))
     amount_in_paise = int(int(amount) * 100)
+    print(amount_in_paise)
     payment_details = client.payment.capture(transaction_key,{
         "amount" : amount_in_paise,
         "currency" : "INR"
