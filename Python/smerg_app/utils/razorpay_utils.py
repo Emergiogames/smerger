@@ -20,8 +20,9 @@ async def verify_payment(transaction_key):
 def create_order(amount):
     client = razorpay.Client(auth=(settings.RAZORPAY_API_KEY, settings.RAZORPAY_API_SECRET))
     try:
+        amount_in_paise = int(amount * 100)
         order = client.order.create({
-            "amount": 10000,
+            "amount": amount_in_paise,
             "currency": "INR",
             # "receipt": "receipt#1",
         })
