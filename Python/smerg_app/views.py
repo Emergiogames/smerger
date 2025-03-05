@@ -1053,8 +1053,8 @@ class RazorOrder(APIView):
         if request.headers.get('token'):
             exists, user = await check_user(request.headers.get('token'))
             if exists:
-                if await Plan.objects.filter(id=request.data.get('id')).aexists():
-                    plan = await Plan.objects.aget(id=request.data.get('id'))
+                if await Plan.objects.filter(id=request.GET.get('id')).aexists():
+                    plan = await Plan.objects.aget(id=request.GET.get('id'))
                     order_amount = await sync_to_async(lambda: plan.price)()
                     order_data = await async_to_sync(create_order)(order_amount)
                     return Response(order_data)
