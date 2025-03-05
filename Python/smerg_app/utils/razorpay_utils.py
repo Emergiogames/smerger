@@ -21,7 +21,7 @@ def create_order(amount):
     client = razorpay.Client(auth=(settings.RAZORPAY_API_KEY, settings.RAZORPAY_API_SECRET))
     try:
         order = client.order.create({
-            "amount": amount,
+            "amount": 10000,
             "currency": "INR",
             # "receipt": "receipt#1",
         })
