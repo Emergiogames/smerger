@@ -1044,7 +1044,8 @@ class Plans(APIView):
         else:
             plan = [plans async for plans in Plan.objects.all().order_by('-id')]
         serialized_data = await serialize_data(plan, PlanSerial)
-        serialized_data['key'] = settings.RAZORPAY_API_KEY
+        for i in serialized_data:
+            i['key'] = settings.RAZORPAY_API_KEY
         return Response(serialized_data)
 
 # Razorpay Order data fetching
