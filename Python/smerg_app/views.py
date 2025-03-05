@@ -1098,7 +1098,9 @@ class Subscribe(APIView):
             if exists:
                 if await Plan.objects.filter(id=request.data.get('id')).aexists():
                     plan = await Plan.objects.aget(id=request.data.get('id'))
+                    print(plan)
                     order_amount = await sync_to_async(lambda: plan.rate)()
+                    print(order_amount)
                     verified, payment_details = await sync_to_async(verify_payment)(request.data.get('transaction_id'), order_amount)
                     if verified:
                         if not await Subscription.objects.filter(user=user, plan__type=plan.type).aexists():
