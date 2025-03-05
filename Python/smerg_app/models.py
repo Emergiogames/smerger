@@ -267,7 +267,7 @@ class Plan(models.Model):
     ]
 
     name = models.CharField(max_length=100)
-    rate = models.IntegerField(default=0)
+    # rate = models.CharField(max_length=500)
     description = models.JSONField()
     time_period = models.IntegerField(default=0)
     post_number = models.IntegerField()
