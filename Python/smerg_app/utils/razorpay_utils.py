@@ -18,20 +18,14 @@ async def verify_payment(transaction_key):
         return False, str(e)
 
 def create_order(amount):
+    client = razorpay.Client(auth=(settings.RAZORPAY_API_KEY, settings.RAZORPAY_API_SECRET))
     try:
-        client = razorpay.Client(auth=(settings.RAZORPAY_API_KEY, settings.RAZORPAY_API_SECRET))
         order = client.order.create({
             "amount": 10000,
             "currency": "INR",
             # "receipt": "receipt#1",
         })
         return order
-    except razorpay.errors.AuthenticationError as e:
-        print("Authentication Failed. Please check your API key and secret.")
-        return None
-    except razorpay.errors.BadRequestError as e:
-        print("Bad Request. Please check the request payload.")
-        return None
     except Exception as e:
-        print("An unexpected error occurred:", e)
+        print(f"An error occurred: {e}")
         return None
