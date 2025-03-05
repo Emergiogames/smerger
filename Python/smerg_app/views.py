@@ -1050,12 +1050,17 @@ class RazorOrder(APIView):
     @swagger_auto_schema(operation_description="Order data fetching", 
     responses={200: "Order data fetching",400: "Passes an error message"})
     async def get(self,request):
-        if await Plan.objects.filter(id=request.data.get('id')).aexists():
-            plan = await Plan.objects.aget(id=request.data.get('id'))
-            order_amount = await sync_to_async(lambda: plan.price)()
-            order_data = await async_to_sync(create_order)(order_amount)
-            return Response(order_data)
-        return Response({'status':False,'message': 'Plan doesnot exist'}, status=status.HTTP_400_BAD_REQUEST)
+        if request.headers.get('token'):
+            exists, user = await check_user(request.headers.get('token'))
+            if exists:
+                if await Plan.objects.filter(id=request.data.get('id')).aexists():
+                    plan = await Plan.objects.aget(id=request.data.get('id'))
+                    order_amount = await sync_to_async(lambda: plan.price)()
+                    order_data = await async_to_sync(create_order)(order_amount)
+                    return Response(order_data)
+                return Response({'status':False,'message': 'Plan doesnot exist'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'status':False,'message': 'User doesnot exist'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'status':False,'message': 'Token is not passed'}, status=status.HTTP_401_UNAUTHORIZED)
 
 # Check subscriptions
 class Subscribe(APIView):
