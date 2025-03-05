@@ -3,19 +3,32 @@ import asyncio
 import razorpay
 from django.conf import settings
 
-async def verify_payment(transaction_key):
+# async def verify_payment(transaction_key):
+#     client = razorpay.Client(auth=(settings.RAZORPAY_API_KEY, settings.RAZORPAY_API_SECRET))
+
+#     try:
+#         payment_details = await asyncio.to_thread(client.payment.fetch, transaction_key)
+
+#         if payment_details['status'] == 'captured':
+#             return True, payment_details
+#         else:
+#             return False, payment_details
+
+#     except Exception as e:
+#         return False, str(e)
+
+def verify_payment(transaction_key, amount):
     client = razorpay.Client(auth=(settings.RAZORPAY_API_KEY, settings.RAZORPAY_API_SECRET))
+    amount_in_paise = int(int(amount) * 100)
+    client.payment.capture(transaction_key,{
+        "amount" : amount_in_paise,
+        "currency" : "INR"
+    })
+    if payment_details['status'] == 'captured':
+        return True, payment_details
+    else:
+        return False, payment_details
 
-    try:
-        payment_details = await asyncio.to_thread(client.payment.fetch, transaction_key)
-
-        if payment_details['status'] == 'captured':
-            return True, payment_details
-        else:
-            return False, payment_details
-
-    except Exception as e:
-        return False, str(e)
 
 def create_order(amount):
     client = razorpay.Client(auth=(settings.RAZORPAY_API_KEY, settings.RAZORPAY_API_SECRET))

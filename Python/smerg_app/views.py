@@ -1096,10 +1096,11 @@ class Subscribe(APIView):
         if request.headers.get('token'):
             exists, user = await check_user(request.headers.get('token'))
             if exists:
-                verified, payment_details = await verify_payment(request.data.get('transaction_id'))
-                if verified:
-                    if await Plan.objects.filter(id=request.data.get('id')).aexists():
-                        plan = await Plan.objects.aget(id=request.data.get('id'))
+                if await Plan.objects.filter(id=request.data.get('id')).aexists():
+                    plan = await Plan.objects.aget(id=request.data.get('id'))
+                    order_amount = await sync_to_async(lambda: plan.rate)()
+                    verified, payment_details = await sync_to_async(verify_payment)(request.data.get('transaction_id'), order_amount)
+                    if verified:
                         if not await Subscription.objects.filter(user=user, plan__type=plan.type).aexists():
                             data = request.data
                             data['user'] = user.id
@@ -1116,9 +1117,9 @@ class Subscribe(APIView):
                         subscribe.remaining_posts = plan.post_number
                         await subscribe.asave()
                         return Response({'status':True}, status=status.HTTP_200_OK)
-                    return Response({'status':False,'message': 'Plan doesnot exist'}, status=status.HTTP_400_BAD_REQUEST)
-                else:
-                    return Response({'status':False,'message': f'Transaction not found {payment_details}' })
+                    else:
+                        return Response({'status':False,'message': f'Transaction not found {payment_details}' })
+                return Response({'status':False,'message': 'Plan doesnot exist'}, status=status.HTTP_400_BAD_REQUEST)
             return Response({'status':False,'message': 'User doesnot exist'}, status=status.HTTP_400_BAD_REQUEST)
         return Response({'status':False,'message': 'Token is not passed'}, status=status.HTTP_401_UNAUTHORIZED)
 
