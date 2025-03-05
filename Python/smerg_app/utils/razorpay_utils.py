@@ -24,7 +24,7 @@ def verify_payment(transaction_key, amount):
     amount_in_paise = int(int(amount) * 100)
     print(amount_in_paise)
     payment_details = client.payment.capture(transaction_key,{
-        "amount" : 100,
+        "amount" : 1,
         "currency" : "INR"
     })
     print(payment_details)
@@ -32,7 +32,6 @@ def verify_payment(transaction_key, amount):
         return True, payment_details
     else:
         return False, payment_details
-
 
 def create_order(amount):
     client = razorpay.Client(auth=(settings.RAZORPAY_API_KEY, settings.RAZORPAY_API_SECRET))
