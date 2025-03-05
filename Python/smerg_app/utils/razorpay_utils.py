@@ -26,6 +26,7 @@ def create_order(amount):
             "currency": "INR",
             # "receipt": "receipt#1",
         })
+        order['key'] = settings.RAZORPAY_API_KEY
         return order
     except Exception as e:
         print(f"An error occurred: {e}")
