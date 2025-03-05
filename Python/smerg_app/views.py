@@ -1056,7 +1056,7 @@ class RazorOrder(APIView):
                 if await Plan.objects.filter(id=request.GET.get('id')).aexists():
                     plan = await Plan.objects.aget(id=request.GET.get('id'))
                     order_amount = await sync_to_async(lambda: plan.rate)()
-                    order_data = await async_to_sync(create_order)(order_amount)
+                    order_data = await sync_to_async(create_order)(order_amount)
                     return Response(order_data)
                 return Response({'status':False,'message': 'Plan doesnot exist'}, status=status.HTTP_404_NOT_FOUND)
             return Response({'status':False,'message': 'User doesnot exist'}, status=status.HTTP_400_BAD_REQUEST)
