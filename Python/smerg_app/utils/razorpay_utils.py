@@ -1,6 +1,7 @@
 #################################  R A Z O R P A Y  P A Y M E N T  V E R I F I C A T I O N  #################################
 import asyncio
 import razorpay
+from django.conf import settings
 
 async def verify_payment(transaction_key):
     client = razorpay.Client(auth=(settings.RAZORPAY_API_KEY, settings.RAZORPAY_API_SECRET))
