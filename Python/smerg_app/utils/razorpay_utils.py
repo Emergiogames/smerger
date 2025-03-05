@@ -15,3 +15,12 @@ async def verify_payment(transaction_key):
 
     except Exception as e:
         return False, str(e)
+
+def create_order(amount):
+    client = razorpay.Client(auth=(settings.RAZORPAY_API_KEY, settings.RAZORPAY_API_SECRET))
+    order = client.order.create({
+        "amount": amount,
+        "currency": "INR",
+        # "receipt": "receipt#1",
+    })
+    return order

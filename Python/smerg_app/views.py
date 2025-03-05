@@ -2,9 +2,8 @@ import requests, aiohttp, asyncio, random, base64, json
 from django.shortcuts import render
 # from rest_framework.views import APIView
 from adrf.views import APIView
-from asgiref.sync import sync_to_async
+from asgiref.sync import sync_to_async, async_to_sync
 from rest_framework.decorators import api_view
-from django.utils.decorators import sync_and_async_middleware
 from rest_framework.response import Response
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
@@ -1033,6 +1032,7 @@ class Banners(APIView):
             banners = [banner async for banner in Banner.objects.filter(type=request.GET.get('type'), validity_date__gte=timezone.now()).order_by('-id')[:5]]
         serialized_data = await serialize_data(banners, BannerSerial)
         return Response(serialized_data)
+
 # Plans
 class Plans(APIView):
     @swagger_auto_schema(operation_description="Plans fetching", 
@@ -1044,11 +1044,18 @@ class Plans(APIView):
             plan = [plans async for plans in Plan.objects.all().order_by('-id')]
         serialized_data = await serialize_data(plan, PlanSerial)
         return Response(serialized_data)
-        # if request.headers.get('token'):
-            # exists, user = await check_user(request.headers.get('token'))
-            # if exists:
-        #     return Response({'status':False,'message': 'User doesnot exist'}, status=status.HTTP_400_BAD_REQUEST)
-        # return Response({'status':False,'message': 'Token is not passed'}, status=status.HTTP_401_UNAUTHORIZED)
+
+# Razorpay Order data fetching
+class RazorOrder(APIView):
+    @swagger_auto_schema(operation_description="Order data fetching", 
+    responses={200: "Order data fetching",400: "Passes an error message"})
+    async def get(self,request):
+        if await Plan.objects.filter(id=request.data.get('id')).aexists():
+            plan = await Plan.objects.aget(id=request.data.get('id'))
+            order_amount = await sync_to_async(lambda: plan.price)()
+            order_data = await async_to_sync(create_order)(order_amount)
+            return Response(order_data)
+        return Response({'status':False,'message': 'Plan doesnot exist'}, status=status.HTTP_400_BAD_REQUEST)
 
 # Check subscriptions
 class Subscribe(APIView):
@@ -1081,29 +1088,29 @@ class Subscribe(APIView):
         if request.headers.get('token'):
             exists, user = await check_user(request.headers.get('token'))
             if exists:
-                # verified, payment_details = await verify_payment(request.data.get('transaction_id'))
-                # if verified:
-                if await Plan.objects.filter(id=request.data.get('id')).aexists():
-                    plan = await Plan.objects.aget(id=request.data.get('id'))
-                    if not await Subscription.objects.filter(user=user, plan__type=plan.type).aexists():
-                        data = request.data
-                        data['user'] = user.id
-                        data['expiry_date'] = (timezone.now() + relativedelta(months=plan.time_period)).strftime('%Y-%m-%d')
-                        data['remaining_posts'] = plan.post_number
-                        data['plan'] = plan.id
-                        saved, resp = await create_serial(SubscribeSerial, data)
-                        if saved:
-                            return Response({'status':True}, status=status.HTTP_200_OK)
-                        return Response(resp)
-                    subscribe = await Subscription.objects.aget(user=user, plan__type=plan.type)
-                    subscribe.plan = plan
-                    subscribe.expiry_date = (timezone.now() + relativedelta(months=plan.time_period)).date()
-                    subscribe.remaining_posts = plan.post_number
-                    await subscribe.asave()
-                    return Response({'status':True}, status=status.HTTP_200_OK)
-                return Response({'status':False,'message': 'Plan doesnot exist'}, status=status.HTTP_400_BAD_REQUEST)
-                # else:
-                #     return Response({'status':False,'message': f'Transaction not found {payment_details}' })
+                verified, payment_details = await verify_payment(request.data.get('transaction_id'))
+                if verified:
+                    if await Plan.objects.filter(id=request.data.get('id')).aexists():
+                        plan = await Plan.objects.aget(id=request.data.get('id'))
+                        if not await Subscription.objects.filter(user=user, plan__type=plan.type).aexists():
+                            data = request.data
+                            data['user'] = user.id
+                            data['expiry_date'] = (timezone.now() + relativedelta(months=plan.time_period)).strftime('%Y-%m-%d')
+                            data['remaining_posts'] = plan.post_number
+                            data['plan'] = plan.id
+                            saved, resp = await create_serial(SubscribeSerial, data)
+                            if saved:
+                                return Response({'status':True}, status=status.HTTP_200_OK)
+                            return Response(resp)
+                        subscribe = await Subscription.objects.aget(user=user, plan__type=plan.type)
+                        subscribe.plan = plan
+                        subscribe.expiry_date = (timezone.now() + relativedelta(months=plan.time_period)).date()
+                        subscribe.remaining_posts = plan.post_number
+                        await subscribe.asave()
+                        return Response({'status':True}, status=status.HTTP_200_OK)
+                    return Response({'status':False,'message': 'Plan doesnot exist'}, status=status.HTTP_400_BAD_REQUEST)
+                else:
+                    return Response({'status':False,'message': f'Transaction not found {payment_details}' })
             return Response({'status':False,'message': 'User doesnot exist'}, status=status.HTTP_400_BAD_REQUEST)
         return Response({'status':False,'message': 'Token is not passed'}, status=status.HTTP_401_UNAUTHORIZED)
 

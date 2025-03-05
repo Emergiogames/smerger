@@ -33,6 +33,7 @@ urlpatterns = [
     path('prefer', Prefer.as_view()),
     path('prefer/<int:id>', Prefer.as_view()), # Preferred
     path('plans', Plans.as_view()), # Plans
+    path('order_fetch', RazorOrder.as_view()), # Razor Pay order
     path('subscribe', Subscribe.as_view()), # Subscriptions
     path('recommended', Recommended.as_view()), # Recommended Posts
     path('featured', Featured.as_view()), # Featured Posts
