@@ -64,5 +64,7 @@ RUN chmod 0644 /etc/cron.d/cronjob
 # Apply cron job
 RUN crontab /etc/cron.d/cronjob
 
+RUN touch /var/log/cron.log && chmod 666 /var/log/cron.log
+
 # Start cron and the application
 CMD service cron start && gunicorn --bind 0.0.0.0:8000 smerger.wsgi:application
