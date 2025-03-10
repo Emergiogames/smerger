@@ -958,11 +958,11 @@ class Prefer(APIView):
 
     @swagger_auto_schema(operation_description="Partially update preference details",
     request_body=PrefSerial,responses={200: "Preference details updated successfully",400: "Error message"})
-    async def patch(self, request, id):
+    async def patch(self, request):
         if request.headers.get('token'):
             exists, user = await check_user(request.headers.get('token'))
             if exists:
-                prefer = await Preference.objects.aget(id=id)
+                prefer = await Preference.objects.aget(user=user)
                 saved, resp = await update_serial(PrefSerial, request.data, prefer)
                 if saved:
                     return Response({'status':True,'message': 'Preference updated successfully'}, status=status.HTTP_201_CREATED)
