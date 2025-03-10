@@ -23,7 +23,7 @@ def verify_payment(transaction_key, amount):
     client = razorpay.Client(auth=(settings.RAZORPAY_API_KEY, settings.RAZORPAY_API_SECRET))
     amount_in_paise = int(int(amount) * 100)
     print(amount_in_paise)
-    payment_details = client.payment.capture(transaction_key, amount)
+    payment_details = client.payment.capture(transaction_key, amount_in_paise)
     print(payment_details)
     if payment_details['status'] == 'captured':
         return True, payment_details
