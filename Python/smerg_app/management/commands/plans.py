@@ -8,7 +8,7 @@ class Command(BaseCommand):
     help = 'Update Daily'
     def handle(self, *args, **kwargs):
         today = timezone.now().date()
-
+        print(f"Cron working : {today}")
         Subscription.objects.filter(expiry_date=today).delete()
 
         Banner.objects.filter(validity_date=today).delete()

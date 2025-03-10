@@ -24,7 +24,7 @@ def verify_payment(transaction_key, amount):
     amount_in_paise = int(int(amount) * 100)
     print(amount_in_paise)
     payment_details = client.payment.capture(transaction_key,{
-        "amount" : 1,
+        "amount" : 100,
         "currency" : "INR"
     })
     print(payment_details)
